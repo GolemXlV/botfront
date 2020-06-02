@@ -6,7 +6,7 @@ import {
 
 const StoryGroupTreeNode = (props) => {
     const {
-        item: { type, ...item },
+        item,
         provided,
         snapshot: { combineTargetFor, isDragging },
         somethingIsMutating,
@@ -22,6 +22,7 @@ const StoryGroupTreeNode = (props) => {
         selectionIsNonContiguous,
         disabled,
     } = props;
+    const { type } = item;
     const [newTitle, setNewTitle] = useState('');
     const [renamingModalPosition, setRenamingModalPosition] = useState(null);
     const renamerRef = useRef();
