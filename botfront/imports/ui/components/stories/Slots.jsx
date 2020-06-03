@@ -8,13 +8,24 @@ import React from 'react';
 import { wrapMeteorCallback } from '../utils/Errors';
 import SlotEditor from './SlotEditor';
 import { slotSchemas } from '../../../api/slots/slots.schema';
+import { ConversationOptionsContext } from './Context';
 
 class Slots extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             newSlot: undefined,
+            slotsUsedInForms: [],
         };
+    }
+
+    componentDidMount() {
+        const { forms } = this.context;
+        let slotsUsedInForms = [];
+        forms.forEach((f) => {
+            slotsUsedInForms += f.slots.map(s => s.name) || [];
+        });
+        this.setState({ slotsUsedInForms });
     }
 
     handleCreateSlot = (e, { value: slotType }) => {
@@ -59,9 +70,11 @@ class Slots extends React.Component {
     // TODO: Add sorting on slot types
     getSlotOptions = () => Object.keys(slotSchemas).map(s => ({ text: s, value: s }));
 
+    static contextType = ConversationOptionsContext;
+
     render() {
         const { slots, projectId } = this.props;
-        const { newSlot } = this.state;
+        const { newSlot, slotsUsedInForms } = this.state;
 
         return (
             <>
@@ -72,6 +85,7 @@ class Slots extends React.Component {
                         projectId={projectId}
                         key={slot._id}
                         onDelete={this.handleDeleteSlot}
+                        deletable={!slotsUsedInForms.includes(slot.name)}
                     />
                 ))}
                 {/* @matt The bool slot is not required here. you can use the value of the slot to know it it's new */}
@@ -83,6 +97,7 @@ class Slots extends React.Component {
                         onSave={this.handleSaveNewSlot}
                         projectId={projectId}
                         newSlot
+                        onDelete={() => this.setState({ newSlot: false })}
                     />
                 )}
                 {!newSlot && (

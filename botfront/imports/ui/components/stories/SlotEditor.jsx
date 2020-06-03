@@ -9,7 +9,7 @@ import SaveButton from '../utils/SaveButton';
 
 function SlotEditor(props) {
     const {
-        slot, onSave, projectId, onDelete, newSlot,
+        slot, onSave, projectId, onDelete, newSlot, deletable,
     } = props;
     const { type } = slot;
     const [saved, setSaved] = useState(false);
@@ -75,27 +75,32 @@ function SlotEditor(props) {
                     saved={saved}
                     saveText={newSlot ? 'Add Slot' : 'Save'}
                 />
-                {hover && !newSlot && (
-                    <Popup
-                        trigger={(
-                            <Icon
-                                name='trash'
-                                color='grey'
-                                link
-                                data-cy='delete-slot'
-                            />
-                        )}
-                        content={(
-                            <ConfirmPopup
-                                title='Delete Slot ?'
-                                onYes={() => onDelete(slot)}
-                                onNo={() => setDeletePopup(false)}
-                            />
-                        )}
-                        on='click'
-                        open={deletePopupOpen}
-                        onOpen={() => setDeletePopup(true)}
-                    />
+                {hover && (
+                    <>
+                        <Popup
+                            trigger={(
+                                <Icon
+                                    name='trash'
+                                    color='grey'
+                                    link={deletable}
+                                    data-cy='delete-slot'
+                                    disabled={!deletable}
+                                />
+                            )}
+                            content={(
+                                <ConfirmPopup
+                                    title='Delete Slot ?'
+                                    onYes={() => onDelete(slot)}
+                                    onNo={() => setDeletePopup(false)}
+                                />
+                            )}
+                            on='click'
+                            open={deletePopupOpen}
+                            onOpen={() => setDeletePopup(true)}
+                            disabled={!deletable}
+                        />
+                        {!deletable && <span className='grey'>This slot cannot be deleted as it is used in forms.</span>}
+                    </>
                 )}
             </AutoForm>
         </Segment>
@@ -108,12 +113,14 @@ SlotEditor.propTypes = {
     projectId: PropTypes.string.isRequired,
     onDelete: PropTypes.func,
     newSlot: PropTypes.bool,
+    deletable: PropTypes.bool,
 };
 
 SlotEditor.defaultProps = {
     onSave: () => {},
     onDelete: () => {},
     newSlot: false,
+    deletable: true,
 };
 
 export default SlotEditor;
