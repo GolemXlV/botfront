@@ -255,6 +255,7 @@ function Stories(props) {
                     getResponseLocations: handleGetResponseLocations,
                     upsertForm: handleUpsertForm,
                     deleteForm: handleDeleteForm,
+                    forms,
                 }}
             >
                 {modalWrapper(
