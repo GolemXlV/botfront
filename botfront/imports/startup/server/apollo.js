@@ -23,6 +23,7 @@ export const connectToDb = () => {
 
 export const runAppolloServer = () => {
     const server = new ApolloServer({
+        introspection: true,
         uploads: false,
         typeDefs,
         resolvers,
